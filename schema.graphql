@@ -1,0 +1,12 @@
+type Tarifa {
+  id: ID!
+  data: String!
+  descricao: String!
+  valorReal: Float!
+  valorDolar: Float!
+  valorEuro: Float!
+}
+
+type Query {
+  tarifaAtual: Tarifa!
+}
