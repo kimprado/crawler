@@ -1,0 +1,8 @@
+*~
+*.out
+.vscode/
+configs/*
+!configs/config-sample.json
+deploy/
+dist/
+crawler.bin
