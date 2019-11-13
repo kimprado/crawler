@@ -44,7 +44,7 @@ type Rates struct {
 	Dolar float64 `json:"USD"`
 }
 
-func consultarCotacao() (dto DTO, err error) {
+func ConsultarCotacao() (dto DTO, err error) {
 
 	err = executarRequisicao(urlBaseUser, &dto)
 

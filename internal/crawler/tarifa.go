@@ -1,6 +1,7 @@
 package crawler
 
 import (
+	"flag"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -10,13 +11,21 @@ import (
 	"time"
 )
 
+var url string
+
+func init() {
+	// urlSite := flag.String("url", "https://www.smartmei.com.br", "Caminho para site")
+	// flag.Parse()
+	// url = *urlSite
+}
+
 //Tarifa representa preço de Transferência
 type Tarifa struct {
 	Descricao string
 	Valor     *float64
 }
 
-var rgTarifa = regexp.MustCompile(`(\d{1,})</div>`)
+var rgTarifa = regexp.MustCompile(`Transferência.*</div>.*</div>.*(\d{1,})</div>`)
 
 func carregarSite(url string, client *http.Client) (body string, cookies []*http.Cookie, err error) {
 
@@ -56,7 +65,11 @@ func recuperarTarifa(body string) (descricao, valor string) {
 	return
 }
 
-func consultarTarifa(url string) (t *Tarifa) {
+func ConsultarTarifa() (t *Tarifa) {
+
+	urlSite := flag.String("url", "https://www.smartmei.com.br", "Caminho para site")
+	flag.Parse()
+	url = *urlSite
 
 	cookieJar, _ := cookiejar.New(nil)
 	client := &http.Client{
