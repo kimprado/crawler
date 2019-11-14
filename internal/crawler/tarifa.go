@@ -12,12 +12,6 @@ import (
 
 var url string
 
-func init() {
-	// urlSite := flag.String("url", "https://www.smartmei.com.br", "Caminho para site")
-	// flag.Parse()
-	// url = *urlSite
-}
-
 //Tarifa representa preço de Transferência
 type Tarifa struct {
 	Descricao string
@@ -56,6 +50,7 @@ func recuperarTarifa(body string) (descricao string) {
 	return
 }
 
+//ConsultarTarifa executa crawler sobre site target
 func ConsultarTarifa() (t *Tarifa, err error) {
 
 	if url == "" {
