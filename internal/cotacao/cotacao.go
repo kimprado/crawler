@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-const urlBaseUser = "https://api.exchangeratesapi.io/latest?base=BRL&symbols=USD,EUR"
+const urlBase = "https://api.exchangeratesapi.io/latest?base=BRL&symbols=USD,EUR"
 
 // Conversor aplica conversões de valores em Real para outras moedas
 // Usa cotação do dia para aplicar conversões
@@ -46,7 +46,7 @@ type Rates struct {
 
 func ConsultarCotacao() (dto DTO, err error) {
 
-	err = executarRequisicao(urlBaseUser, &dto)
+	err = executarRequisicao(urlBase, &dto)
 
 	return
 }
