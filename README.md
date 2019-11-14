@@ -5,7 +5,7 @@ Crawler para buscar o valor atual de uma Transferência do Plano Profissional no
 ## Dependências
 
  - [Golang 1.13](https://golang.org/) - Linguagem usada para implementar a solução.
- - [gqlgen](https://github.com/99designs/gqlgen/) - Implementação servidor GrapthQL.
+ - [gqlgen](https://github.com/99designs/gqlgen/) - Implementação servidor GraphQL.
 
 ## Execução
 
