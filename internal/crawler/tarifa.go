@@ -59,7 +59,7 @@ func recuperarTarifa(body string) (descricao string) {
 func ConsultarTarifa() (t *Tarifa, err error) {
 
 	if url == "" {
-		urlSite := flag.String("url", "http://www.smartmei.com.br", "Caminho para site")
+		urlSite := flag.String("url", "https://www.smartmei.com.br", "Caminho para site")
 		flag.Parse()
 		url = *urlSite
 	}
