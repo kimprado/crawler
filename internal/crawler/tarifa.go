@@ -3,11 +3,10 @@ package crawler
 import (
 	"flag"
 	"io/ioutil"
-	"log"
 	"net/http"
-	"net/http/cookiejar"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -25,7 +24,8 @@ type Tarifa struct {
 	Valor     *float64
 }
 
-var rgTarifa = regexp.MustCompile(`Transferência.*</div>.*</div>.*(\d{1,})</div>`)
+var rgTarifa = regexp.MustCompile(`tarifas-2-2-2">\s{0,}(R\$\s{0,}\d{1,},\d{1,})`)
+var rgValorTarifa = regexp.MustCompile(`(R\$\s{0,})(\d{1,})(,)(\d{1,})`)
 
 func carregarSite(url string, client *http.Client) (body string, cookies []*http.Cookie, err error) {
 
@@ -33,15 +33,6 @@ func carregarSite(url string, client *http.Client) (body string, cookies []*http
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Host", "applicant-test.us-east-1.elasticbeanstalk.com")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0")
-	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-	req.Header.Set("Accept-Language", "en-US,en;q=0.5")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
-	req.Header.Set("Connection", "keep-alive")
-	req.Header.Set("Upgrade-Insecure-Requests", "1")
-	req.Header.Set("Cache-Control", "max-age=0")
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -57,36 +48,39 @@ func carregarSite(url string, client *http.Client) (body string, cookies []*http
 	return
 }
 
-func recuperarTarifa(body string) (descricao, valor string) {
+func recuperarTarifa(body string) (descricao string) {
 	t := rgTarifa.FindStringSubmatch(body)
 	if len(t) > 1 {
-		valor = t[1]
+		descricao = t[1]
 	}
 	return
 }
 
-func ConsultarTarifa() (t *Tarifa) {
+func ConsultarTarifa() (t *Tarifa, err error) {
 
-	urlSite := flag.String("url", "https://www.smartmei.com.br", "Caminho para site")
-	flag.Parse()
-	url = *urlSite
+	if url == "" {
+		urlSite := flag.String("url", "http://www.smartmei.com.br", "Caminho para site")
+		flag.Parse()
+		url = *urlSite
+	}
 
-	cookieJar, _ := cookiejar.New(nil)
 	client := &http.Client{
 		Timeout: time.Second * 30,
-		Jar:     cookieJar,
 	}
 
 	body, _, err := carregarSite(url, client)
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
 
-	descricaoTarifa, valorTarifa := recuperarTarifa(body)
+	descricaoTarifa := recuperarTarifa(body)
+
+	valorTarifa := strings.TrimSpace(descricaoTarifa)
+	valorTarifa = rgValorTarifa.ReplaceAllString(valorTarifa, "$2.$4")
 
 	valorDecimal, err := strconv.ParseFloat(valorTarifa, 64)
 	if err != nil {
-		valorDecimal = 0
+		return
 	}
 
 	t = &Tarifa{

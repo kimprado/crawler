@@ -2,8 +2,6 @@ package crawler
 
 import "testing"
 
-// func TestRecuperarTarifa(t *testing.T) {
-// pagina := `
 var pagina string = `
 <!DOCTYPE html>
 <html lang="pt-BR" prefix="og: http://ogp.me/ns#">
@@ -1383,19 +1381,43 @@ var wc_cart_fragments_params = {"ajax_url":"\/wp-admin\/admin-ajax.php","wc_ajax
 
 </body>
 </html>
-	`
+`
 
 func TestRecuperarTarifa(t *testing.T) {
 
-	valorEsperado := "7,00"
 	descricaoEsperada := "R$ 7,00"
-	descricao, valor := recuperarTarifa(pagina)
 
-	if valorEsperado != valor {
-		t.Errorf("Valor esperado %q, mas recebido %q\n", valorEsperado, valor)
-	}
+	descricao := recuperarTarifa(pagina)
+
 	if descricaoEsperada != descricao {
 		t.Errorf("Descrição esperada %q, mas recebida %q\n", descricaoEsperada, descricao)
+	}
+
+}
+
+func TestConsultarTarifa(t *testing.T) {
+
+	var err error
+
+	valorEsperado := float64(7)
+	descricaoEsperada := "R$ 7,00"
+	tarifa, err := ConsultarTarifa()
+
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if tarifa == nil {
+		t.Errorf("Tarifa nula\n")
+		return
+	}
+
+	if tarifa != nil && (tarifa.Valor == nil || valorEsperado != *tarifa.Valor) {
+		t.Errorf("Valor esperado %v, mas recebido %v\n", valorEsperado, tarifa.Valor)
+	}
+	if descricaoEsperada != tarifa.Descricao {
+		t.Errorf("Descrição esperada %q, mas recebida %q\n", descricaoEsperada, tarifa.Descricao)
 	}
 
 }
