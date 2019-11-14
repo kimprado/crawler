@@ -44,6 +44,7 @@ type Rates struct {
 	Dolar float64 `json:"USD"`
 }
 
+// ConsultarCotacao pesquisa cotação online
 func ConsultarCotacao() (dto DTO, err error) {
 
 	err = executarRequisicao(urlBase, &dto)
