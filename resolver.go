@@ -16,16 +16,36 @@ func (r *Resolver) Query() QueryResolver {
 
 type queryResolver struct{ *Resolver }
 
+type resultadoConsultado struct {
+	tarifa *crawler.Tarifa
+	err    error
+}
+
 func (r *queryResolver) TarifaAtual(ctx context.Context) (*Tarifa, error) {
 	var err error
 	agora := time.Now()
 
-	var dto cotacao.DTO
+	chResultado := make(chan *resultadoConsultado)
 
-	tarifaConsultada := crawler.ConsultarTarifa()
+	go func(chR chan *resultadoConsultado) {
+		tarifa, err := crawler.ConsultarTarifa()
+		chR <- &resultadoConsultado{tarifa, err}
+	}(chResultado)
+
+	var dto cotacao.DTO
 	dto, err = cotacao.ConsultarCotacao()
+	if err != nil {
+		return nil, err
+	}
 
 	conversor := cotacao.NewConversor(dto)
+
+	resultado := <-chResultado
+	if resultado.err != nil {
+		return nil, resultado.err
+	}
+
+	tarifaConsultada := resultado.tarifa
 
 	tarifa := &Tarifa{
 		Data:       agora.Format("2006-01-02 15:04:05"),
