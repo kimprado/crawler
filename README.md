@@ -55,3 +55,16 @@ Saída
   }
 }
 ```
+
+## Testes
+
+Para executar os testes do projeto use o seguinte comando:
+
+```sh
+go test ./...
+
+# ?       bitbucket.org/challen_ge/smartmei_backend       [no test files]
+# ok      bitbucket.org/challen_ge/smartmei_backend/internal/cotacao      0.003s
+# ok      bitbucket.org/challen_ge/smartmei_backend/internal/crawler      0.628s
+# ?       bitbucket.org/challen_ge/smartmei_backend/server        [no test files]
+```
